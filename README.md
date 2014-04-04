@@ -26,7 +26,7 @@ set :stage_config_path,   deploy_path.join("environments")
 
 
 require 'capistrano/cluster'
-
+```
 
 
 ## Contributing
