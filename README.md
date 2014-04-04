@@ -19,13 +19,14 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-  deploy_path = Pathname(Dir.pwd).join "deploy"
+deploy_path = Pathname(Dir.pwd).join "deploy"
 
-  set :deploy_config_path,  deploy_path.join("config.rb")
-  set :stage_config_path,   deploy_path.join("environments")
+set :deploy_config_path,  deploy_path.join("config.rb")
+set :stage_config_path,   deploy_path.join("environments")
 
 
-  require 'capistrano/cluster'
+require 'capistrano/cluster'
+
 
 
 ## Contributing
