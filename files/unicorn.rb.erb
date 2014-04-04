@@ -1,0 +1,60 @@
+
+ def processor_count
+    case RbConfig::CONFIG['host_os']
+    when /darwin9/
+      `hwprefs cpu_count`.to_i
+    when /darwin/
+      ((`which hwprefs` != '') ? `hwprefs thread_count` : `sysctl -n hw.ncpu`).to_i
+    when /linux/
+      `cat /proc/cpuinfo | grep processor | wc -l`.to_i
+    when /freebsd/
+      `sysctl -n hw.ncpu`.to_i
+    when /mswin|mingw/
+      require 'win32ole'
+      wmi = WIN32OLE.connect("winmgmts://")
+      cpu = wmi.ExecQuery("select NumberOfCores from Win32_Processor") # TODO count hyper-threaded in this
+      cpu.to_enum.first.NumberOfCores
+    end
+  end
+
+
+working_directory "<%= current_path %>"
+
+worker_processes processor_count
+preload_app true
+timeout 180
+
+
+stderr_path "<%= shared_path.join("log/unicorn-error.log") %>"
+stdout_path "<%= shared_path.join("log/unicorn.log") %>"
+
+
+pid "<%= shared_path.join("tmp/pids/unicorn.pid") %>"
+
+if GC.respond_to?(:copy_on_write_friendly=)
+  GC.copy_on_write_friendly = true
+end
+
+before_exec do |server|
+  ENV["BUNDLE_GEMFILE"] = "<%=current_path%>/Gemfile"
+  Unicorn::HttpServer::START_CTX[0] = "<%=shared_path%>/bin/unicorn"
+end
+
+before_fork do |server, worker|
+  defined?(ActiveRecord) && ActiveRecord::Base.connection.disconnect!
+
+  old_pid = "#{server.config[:pid]}.oldbin"
+  if File.exists?(old_pid) && server.pid != old_pid
+    begin
+      Process.kill("QUIT", File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+      # someone else did our job for us
+    end
+  end
+end
+
+after_fork do |server, worker|
+  defined?(ActiveRecord) && ActiveRecord::Base.establish_connection
+  defined?(Rails) and Rails.cache.respond_to?(:reconnect) and Rails.cache.reconnect
+
+end

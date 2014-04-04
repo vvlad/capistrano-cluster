@@ -1,0 +1,11 @@
+<%= environment %>:
+  adapter: <%= adapter %>
+  host: <%= hostname %>
+  database: <%= name %>
+  username: <%= username %>
+  password: <%= password %>
+  encoding: <%= encoding || "utf-8" %>
+  reconnect: true
+  <%options.each_pair do |attribute,value| %><%= attribute %>: <%= value %>
+  <%end%>
+

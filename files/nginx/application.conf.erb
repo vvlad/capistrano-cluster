@@ -1,0 +1,67 @@
+
+upstream upstream_<%= fetch(:application) %> {
+  server unix:<%= shared_path.join("tmp/sockets") %>/nginx.sock fail_timeout=0;
+}
+
+
+server {
+  listen 80;
+
+  <% fetch(:hostnames).each do |hostname| %>
+  server_name <%= hostname %>;
+  <% end %>
+
+  root <%= current_path.join("public") %>;
+
+  access_log off;
+  error_log <%= shared_path.join("log") %>/error.log notice;
+  access_log  <%= shared_path.join("log") %>/access.log main;
+
+  client_max_body_size 100M;
+
+  error_page 404 /404.html;
+  error_page 500 502 504 /500.html;
+  error_page 503 @503;
+  recursive_error_pages on;
+
+  location @503 {
+
+    error_page 405 = /system/maintenance.html;
+
+    if (-f $request_filename) {
+      break;
+    }
+
+    rewrite ^(.*)$ /system/maintenance.html break;
+  }
+
+
+  location @app_<%= fetch(:application) %> {
+    index index.html index.htm;
+
+    proxy_set_header  X-Real-IP         $remote_addr;
+    proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header  Host              $http_host;
+
+    proxy_pass http://upstream_<%= fetch(:application) %>;
+  }
+
+
+
+  location ~ ^/(images|assets|javascripts|stylesheets)/ {
+    try_files  $uri $uri/index.html /last_assets/$uri /last_assets/$uri.html @app_<%= fetch(:application) %>;
+    gzip_static on;
+    expires max;
+    add_header Cache-Control public;
+  }
+
+  location / {
+    if (-f $document_root/system/maintenance.html) { return 503; }
+    try_files  $uri $uri/index.html $uri.html @app_<%= fetch(:application) %>;
+  }
+
+  location = /500.html {
+    root <%= current_path.join("public") %>;
+  }
+
+}

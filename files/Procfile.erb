@@ -1,0 +1,2 @@
+<% processes.each_pair do |name, command| %>
+<%= name %>: export RAILS_ENV='<%=framework_env%>'; <%= command %><%end%>

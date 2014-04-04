@@ -1,0 +1,3 @@
+Host gitlab.voucherry.com
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+  <luceneMatchVersion>LUCENE_40</luceneMatchVersion>
+  <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.StandardDirectoryFactory}"/>
+
+  <indexConfig>
+
+    <mergeFactor>10</mergeFactor>
+    <maxBufferedDocs>10000</maxBufferedDocs>
+
+  </indexConfig>
+  <dataDir>${solr.core0.data.dir:}</dataDir>
+  <lib dir="./lib"></lib>
+  <updateHandler class="solr.DirectUpdateHandler2">
+    <updateLog>
+      <str name="dir">${solr.core0.data.dir:}</str>
+    </updateLog>
+
+    <autoCommit>
+        <maxDocs>10000</maxDocs> <!-- maximum uncommited docs before autocommit triggered -->
+        <maxTime>1500</maxTime> <!-- maximum time (in MS) after adding a doc before an autocommit is triggered -->
+        <openSearcher>true</openSearcher> <!-- SOLR 4.0.  Optionally don't open a searcher on hard commit.  This is useful to minimize the size of transaction logs that keep track of uncommitted updates. -->
+    </autoCommit>
+
+  </updateHandler>
+
+  <requestHandler name="/get" class="solr.RealTimeGetHandler">
+    <lst name="defaults">
+      <str name="omitHeader">true</str>
+    </lst>
+  </requestHandler>
+
+  <requestHandler name="/replication" class="solr.ReplicationHandler" startup="lazy" />
+
+  <requestDispatcher handleSelect="true" >
+    <requestParsers enableRemoteStreaming="false" multipartUploadLimitInKB="2048" />
+  </requestDispatcher>
+
+  <requestHandler name="standard" class="solr.StandardRequestHandler" default="true" />
+  <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
+  <requestHandler name="/update" class="solr.UpdateRequestHandler"  />
+  <requestHandler name="/admin/" class="org.apache.solr.handler.admin.AdminHandlers" />
+
+  <requestHandler name="/admin/ping" class="solr.PingRequestHandler">
+    <lst name="invariants">
+      <str name="q">solrpingquery</str>
+    </lst>
+    <lst name="defaults">
+      <str name="echoParams">all</str>
+    </lst>
+  </requestHandler>
+
+  <!-- config for the admin interface -->
+  <admin>
+    <defaultQuery>solr</defaultQuery>
+  </admin>
+
+</config>
+

@@ -1,0 +1,90 @@
+
+upstream upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%> {
+  keepalive 1024;
+  <% roles(:web).each do |backend| %>
+  server <%= backend.hostname %> max_fails=3 fail_timeout=10s;
+  <% end %>
+}
+
+
+server {
+  listen 80;
+
+  <% fetch(:hostnames).each do |hostname| %>
+    server_name <%= hostname %>;
+  <%end%>
+
+  access_log  /var/log/nginx/<%= fetch(:application) %>-<%= fetch(:framework_env)%>.log main;
+  error_log /var/log/nginx/<%= fetch(:application) %>-<%= fetch(:framework_env)%>.log notice;
+
+
+  client_max_body_size 100M;
+
+  proxy_set_header  X-Real-IP         $remote_addr;
+  proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+  proxy_set_header  Host              $http_host;
+  proxy_set_header  X-Forwarded-Proto http;
+
+  proxy_redirect off;
+  proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+
+  location ~* \.(jpg|png|gif|jpeg|css|js|mp3|wav|swf|mov|doc|pdf|xls|ppt|docx|pptx|xlsx)$ {
+    proxy_buffering  on;
+    proxy_cache_valid 200 120m;
+    log_not_found off;
+    expires 864000;
+    proxy_pass http://upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%>;
+  }
+
+  location / {
+    proxy_pass http://upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%>;
+  }
+
+}
+
+
+<% if ssl %>
+
+server {
+  listen 443;
+
+  ssl on;
+  ssl_certificate /etc/nginx/servers/<%= fetch(:application) %>-<%= fetch(:framework_env) %>/ssl.pem;
+  ssl_certificate_key /etc/nginx/servers/<%= fetch(:application) %>-<%= fetch(:framework_env) %>/ssl.pem;
+
+  <% fetch(:hostnames).each do |hostname| %>
+    server_name <%= hostname %>;
+  <%end%>
+
+  access_log  /var/log/nginx/<%= fetch(:application) %>-<%= fetch(:framework_env)%>.log main;
+  error_log /var/log/nginx/<%= fetch(:application) %>-<%= fetch(:framework_env)%>.log notice;
+
+  client_max_body_size 100M;
+
+  proxy_set_header  X-Real-IP         $remote_addr;
+  proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
+  proxy_set_header  Host              $http_host;
+  proxy_set_header  X-Forwarded-Proto https;
+
+
+
+  proxy_redirect off;
+  proxy_max_temp_file_size 0;
+  proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+
+  location ~* \.(jpg|png|gif|jpeg|css|js|mp3|wav|swf|mov|doc|pdf|xls|ppt|docx|pptx|xlsx)$ {
+    proxy_buffering  on;
+    proxy_cache_valid 200 120m;
+    log_not_found off;
+    expires 864000;
+    proxy_pass http://upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%>;
+  }
+
+  location / {
+    proxy_pass http://upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%>;
+  }
+
+
+}
+
+<% end %>
