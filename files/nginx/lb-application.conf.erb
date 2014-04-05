@@ -28,6 +28,8 @@ server {
   proxy_redirect off;
   proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
 
+  include /etc/nginx/servers/<%= fetch(:application) %>-<%= fetch(:framework_env)%>/*/proxy.conf;
+
   location ~* \.(jpg|png|gif|jpeg|css|js|mp3|wav|swf|mov|doc|pdf|xls|ppt|docx|pptx|xlsx)$ {
     proxy_buffering  on;
     proxy_cache_valid 200 120m;
@@ -71,6 +73,9 @@ server {
   proxy_redirect off;
   proxy_max_temp_file_size 0;
   proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+
+  include /etc/nginx/servers/<%= fetch(:application) %>-<%= fetch(:framework_env)%>/*/proxy.conf;
+
 
   location ~* \.(jpg|png|gif|jpeg|css|js|mp3|wav|swf|mov|doc|pdf|xls|ppt|docx|pptx|xlsx)$ {
     proxy_buffering  on;
