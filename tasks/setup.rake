@@ -6,6 +6,7 @@ task :setup do
   invoke "setup:packages"
   invoke "setup:firewall"
   invoke "setup:customizations"
+  invoke "setup:swap"
   invoke "setup:db"
   invoke "setup:indexer"
   invoke "setup:cache"
@@ -69,12 +70,17 @@ namespace :setup do
       upload_as :root, file("sshd_config"), "/etc/ssh/sshd_config"
       upload_as :root, file("issue.net"), "/etc/issue.net"
       sudo :service, 'ssh', 'reload'
+    end
+  end
+
+  task :swap do
+    on roles(:swap) do
       if test "[ ! -f /swap ]"
         sudo "dd if=/dev/zero of=/swap count=$(cat /proc/meminfo | head -1  | awk '{ print $2*2 }') bs=1KB"
         sudo "mkswap /swap"
         sudo "swapon /swap"
+        sudo "echo '/swap none            swap    sw              0       0' >> /etc/fstab "
       end
-
     end
   end
 

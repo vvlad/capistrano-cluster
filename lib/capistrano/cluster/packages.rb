@@ -38,7 +38,7 @@ module Capistrano
         end
 
         def file_path(source)
-          lookup_paths = [fetch(:templates_path), fetch(:default_templates_path)].compact
+          lookup_paths = [fetch(:files_path), fetch(:default_templates_path)].compact
           lookup_paths.map do |path|
             [File.join(path, "#{source}"), File.join(path, "#{source}.erb")]
           end.flatten.select do |file|
@@ -58,4 +58,4 @@ end
 
 include Capistrano::Cluster::Packages::DSL
 
-
+set :files_path, fetch(:files_path, Pathname(fetch(:deploy_config_path)).dirname.join("files"))

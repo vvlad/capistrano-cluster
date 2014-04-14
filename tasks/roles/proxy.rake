@@ -23,12 +23,15 @@ namespace :setup do
 
 end
 
+task :proxy_defaults do
+  set :proxy_files, fetch(:proxy_files,{})
+end
 
 namespace :deploy do
 
   namespace :application do
 
-    task :proxy do
+    task proxy: :proxy_defaults do
 
       on roles(:proxy) do
 
@@ -40,6 +43,11 @@ namespace :deploy do
         if ssl_certificate = fetch(:ssl_certificate)
           upload_as :root, StringIO.new(ssl_certificate), shared_path.join("ssl.pem")
         end
+
+        fetch(:proxy_files).each_pair do |file, remote_file|
+          upload_as :root, file(file), shared_path.join(remote_file)
+        end
+
         upload_as :root, file("nginx/lb-application.conf", ssl: ssl_certificate), shared_path.join("nginx.conf")
 
         sudo "bash -c 'nginx -s reload || service nginx restart'"
