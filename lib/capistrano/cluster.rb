@@ -21,8 +21,14 @@ module Capistrano
   end
 end
 
-Dir.glob(File.expand_path('../../../tasks/**/*.rake',__FILE__)).each do |r|
+tasks_path = Pathname(File.expand_path('../../../tasks/',__FILE__))
+
+import tasks_path.join("setup.rake")
+
+Dir.glob(tasks_path.join("*/*.rake")).each do |r|
   import r
 end
-task prepare: :setup
+
+import tasks_path.join("deploy.rake")
+import tasks_path.join("deploy/application.rake")
 

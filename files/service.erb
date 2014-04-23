@@ -16,10 +16,10 @@ RUBY_GC_MALLOC_LIMIT=79000000
 
 PID_FILE="<%= pid_file %>"
 <% unless user.nil? %>
-exec 1>>/var/log/service.<%= name %>.log 2>&1
+exec 1>><%= log_file %> 2>&1
 if [[ "$(id -u)" != "$(id -u <%= user %>)" ]] ; then
-  touch /var/log/service.<%= name %>.log $PID_FILE
-  chown <%= user %> /var/log/service.<%= name %>.log $PID_FILE
+  touch <%= log_file %> $PID_FILE
+  chown <%= user %> <%= log_file %> $PID_FILE
   exec su - <%= user %> $0 $*
 fi
 <% end %>
@@ -28,7 +28,7 @@ fi
 
 function start() {
   cd <%= working_dir %>
-  nohup <%= start_cmd %> >>/var/log/service.<%= name %>.log 2>&1 &
+  nohup <%= start_cmd %> >><%= log_file %> 2>&1 &
   if [[ $? -eq 0 ]]; then
     echo $! > $PID_FILE
   else

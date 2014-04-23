@@ -8,6 +8,7 @@ module Capistrano
       module DSL
 
         def install(*packages)
+          update_apt_source_list
           sudo "apt-get", "-q", "-y", "install", *packages.flatten
         end
 

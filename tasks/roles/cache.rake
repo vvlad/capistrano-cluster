@@ -11,3 +11,6 @@ namespace :setup do
   end
 
 end
+
+
+after "setup:system", "setup:cache"

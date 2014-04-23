@@ -55,7 +55,7 @@ namespace :setup do
 
 end
 
-
+after "setup:system", "setup:indexer"
 
 namespace :deploy do
   namespace :application do

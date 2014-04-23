@@ -30,6 +30,15 @@ module Capistrano
         original_env
       end
 
+      def login_as(user, on: nil, &block)
+        if on
+          old_user,on.user = on.user, user
+        end
+        yield
+      ensure
+        on.user = old_user if on
+      end
+
       def with_application(application, &block)
         original_env = configure_application(application)
         yield

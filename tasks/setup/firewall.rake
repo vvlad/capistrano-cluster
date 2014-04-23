@@ -50,3 +50,4 @@ namespace :setup do
 end
 
 
+before "setup:finished", "setup:firewall"

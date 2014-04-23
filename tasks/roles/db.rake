@@ -1,7 +1,7 @@
-
+#TODO (vvlad): tune using pgtune
 namespace :setup do
 
-  task db: :package_sources do
+  task :db do
 
     on roles(:db) do
 
@@ -12,6 +12,7 @@ namespace :setup do
 
       if test "[ ! -f /var/lib/postgresql/.first-time ]"
         sudo :service, "postgresql", :restart
+        sudo :touch, '/var/lib/postgresql/.first-time'
       else
         sudo :service, "postgresql", :reload
       end
@@ -21,7 +22,7 @@ namespace :setup do
 
 end
 
-
+after "setup:system", "setup:db"
 
 namespace :deploy do
   namespace :application do

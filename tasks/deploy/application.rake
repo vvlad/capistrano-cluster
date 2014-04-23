@@ -13,7 +13,6 @@ namespace :deploy do
       invoke "deploy:application:web"
       invoke "deploy:application:indexer"
       invoke "deploy:application:db"
-      invoke "deploy:worker"
       invoke "deploy:application:proxy"
     end
 

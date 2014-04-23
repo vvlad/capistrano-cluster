@@ -37,6 +37,11 @@ module Capistrano
         @user
       end
 
+      def log_file(*args)
+        @log_file = args.first if args.length > 0
+        @log_file || "/var/log/service.#{@name}.log"
+      end
+
       def script
         file("service", name: name, start_cmd: start, pid_file: pid_file, working_dir: working_dir, reload_cmd: reload, stop_cmd: stop, user: user)
       end

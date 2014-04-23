@@ -16,12 +16,11 @@ namespace :setup do
       sudo "nginx -s reload || sudo service nginx restart"
     end
 
-
   end
 
-
-
 end
+
+after "setup:customizations", "setup:web"
 
 namespace :deploy do
 

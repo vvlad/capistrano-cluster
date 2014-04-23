@@ -24,14 +24,11 @@ server {
   proxy_set_header  X-Real-IP         $remote_addr;
   proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
   proxy_set_header  Host              $http_host;
-  set $x_forwarded_proto http;
-
+  proxy_set_header  X-Forwarded-Proto http;
 
   proxy_redirect off;
   proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
 
-  include /etc/nginx/servers/<%= fetch(:application) %>-<%= fetch(:framework_env)%>/*/proxy.conf;
-  proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
 
   location ~* \.(jpg|png|gif|jpeg|css|js|mp3|wav|swf|mov|doc|pdf|xls|ppt|docx|pptx|xlsx)$ {
     proxy_buffering  on;
@@ -42,7 +39,6 @@ server {
   }
 
   location / {
-
     proxy_pass http://upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%>;
   }
 
@@ -70,15 +66,12 @@ server {
   proxy_set_header  X-Real-IP         $remote_addr;
   proxy_set_header  X-Forwarded-For   $proxy_add_x_forwarded_for;
   proxy_set_header  Host              $http_host;
-  set $x_forwarded_proto https;
+  proxy_set_header  X-Forwarded-Proto https;
 
 
   proxy_redirect off;
   proxy_max_temp_file_size 0;
   proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
-
-  include /etc/nginx/servers/<%= fetch(:application) %>-<%= fetch(:framework_env)%>/*/proxy.conf;
-  proxy_set_header X-Forwarded-Proto $x_forwarded_proto;
 
   location ~* \.(jpg|png|gif|jpeg|css|js|mp3|wav|swf|mov|doc|pdf|xls|ppt|docx|pptx|xlsx)$ {
     proxy_buffering  on;
@@ -89,7 +82,6 @@ server {
   }
 
   location / {
-
     proxy_pass http://upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%>;
   }
 

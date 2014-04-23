@@ -1,4 +1,4 @@
-
+set :proxy_files, fetch(:proxy_files,{})
 namespace :setup do
 
   task :proxy do
@@ -23,15 +23,13 @@ namespace :setup do
 
 end
 
-task :proxy_defaults do
-  set :proxy_files, fetch(:proxy_files,{})
-end
+after "setup:system", "setup:proxy"
 
 namespace :deploy do
 
   namespace :application do
 
-    task proxy: :proxy_defaults do
+    task :proxy do
 
       on roles(:proxy) do
 
