@@ -20,7 +20,11 @@
 
 working_directory "<%= current_path %>"
 
+<% if instances %>
+worker_processes <%= instances %>
+<% else %>
 worker_processes processor_count * 2
+<% end %>
 preload_app true
 timeout 180
 

@@ -28,9 +28,9 @@ namespace :deploy do
 
     task :web do
 
-      on roles(:web) do
+      on roles(:web) do |host|
 
-        upload! file("unicorn.rb"), shared_path.join("config/unicorn.rb")
+        upload! file("unicorn.rb", instances: host.properties.instances ), shared_path.join("config/unicorn.rb")
         upload! file("nginx/application.conf"), shared_path.join("config/nginx.conf")
 
         service "#{fetch(:application)}-web" do
