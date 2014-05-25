@@ -35,5 +35,16 @@ namespace :deploy do
   end
 end
 
+namespace :firewall do
+  task :rabbitmq do
+    on roles(:rabbitmq) do |server|
+      sudo :ufw, :allow, :in, :epmd
+      sudo :ufw, :allow, :in, :amqp
+      sudo :ufw, :allow, :in, :'25672'
+    end
+  end
+end
+
 
 before "deploy:publishing", "deploy:rabbitmq"
+after "setup:finished", "firewall:rabbitmq"
