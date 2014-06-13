@@ -76,7 +76,7 @@ namespace :deploy do
       end
 
       on primary :resque_scheduler do
-        if test "-f '/etc/init.d/#{fetch(:application)}-scheduler' "
+        if test "[ -f '/etc/init.d/#{fetch(:application)}-scheduler' ]"
           execute "/etc/init.d/#{fetch(:application)}-scheduler", :start
         end
       end
