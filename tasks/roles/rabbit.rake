@@ -21,6 +21,7 @@ namespace :setup do
 
     on roles(:rabbitmq) do
       install "rabbitmq-server"
+      upload_as :rabbitmq, StringIO.new("[rabbitmq_management,rabbitmq_management_visualiser,rabbitmq_stomp,rabbitmq_amqp1_0,rabbitmq_mqtt]."), "/etc/rabbitmq/enabled_plugins"
     end
 
   end
@@ -41,10 +42,11 @@ namespace :firewall do
       sudo :ufw, :allow, :in, :epmd
       sudo :ufw, :allow, :in, :amqp
       sudo :ufw, :allow, :in, :'25672'
+      sudo :ufw, :allow, :in, :'15672'
     end
   end
 end
 
 
 before "deploy:publishing", "deploy:rabbitmq"
-after "setup:finished", "firewall:rabbitmq"
+after "setup:firewall", "firewall:rabbitmq"
