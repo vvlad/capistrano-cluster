@@ -1,5 +1,4 @@
-
-solr_version = fetch(:solr_version, "4.7.1")
+solr_version = fetch(:solr_version, "4.9.0")
 
 set :solr_version, solr_version
 set :solr_url, fetch(:solr_url, "http://mirrors.hostingromania.ro/apache.org/lucene/solr/#{solr_version}/solr-#{solr_version}.tgz")
