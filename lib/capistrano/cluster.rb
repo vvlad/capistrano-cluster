@@ -24,6 +24,7 @@ end
 tasks_path = Pathname(File.expand_path('../../../tasks/',__FILE__))
 
 import tasks_path.join("setup.rake")
+import tasks_path.join("setup/firewall.rake")
 
 Dir.glob(tasks_path.join("*/*.rake")).each do |r|
   import r
