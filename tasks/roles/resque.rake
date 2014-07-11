@@ -74,13 +74,13 @@ namespace :deploy do
 
         host.properties.workers.to_i.times do |worker_id|
           service_name = [fetch(:application), fetch(:stage), 'resque', worker_id].join("-")
-          sudo "/etc/init.d/#{service_name} start"
+          sudo "/etc/init.d/#{service_name}", :start
         end
       end
 
       on primary :resque_scheduler do
         if test "[ -f '/etc/init.d/#{fetch(:application)}-scheduler' ]"
-          execute "/etc/init.d/#{fetch(:application)}-scheduler", :start
+          sudo "/etc/init.d/#{fetch(:application)}-scheduler", :start
         end
       end
 
