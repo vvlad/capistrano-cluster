@@ -74,7 +74,7 @@ namespace :deploy do
 
         host.properties.workers.to_i.times do |worker_id|
           service_name = [fetch(:application), fetch(:stage), 'resque', worker_id].join("-")
-          run "/etc/init.d/#{service_name} start"
+          sudo "/etc/init.d/#{service_name} start"
         end
       end
 
