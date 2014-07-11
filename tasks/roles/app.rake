@@ -59,4 +59,5 @@ set :app_packages, %w[
   zlib1g-dev
   postgresql-client-9.3
   jpegoptim
+  libv8-dev
 ]

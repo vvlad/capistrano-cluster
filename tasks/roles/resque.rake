@@ -71,8 +71,11 @@ namespace :deploy do
 
     task :start do
       on roles(:resque) do
-        match = [fetch(:application), fetch(:stage), 'resque', '*'].join("-")
-        execute :find, "/etc/init.d", "-type f", "-name #{match}", "-exec {} start \\;"
+
+        host.properties.workers.to_i.times do |worker_id|
+          service_name = [fetch(:application), fetch(:stage), 'resque', worker_id].join("-")
+          run "/etc/init.d/#{service_name} start"
+        end
       end
 
       on primary :resque_scheduler do
