@@ -1,5 +1,3 @@
-
-
 namespace :setup do
 
   task :web do
