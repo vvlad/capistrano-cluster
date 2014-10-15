@@ -15,9 +15,17 @@ namespace :setup do
 
       end
     end
+
+    task :package_sources do
+      on roles(:app) do
+        sudo "apt-add-repository", "-y", "ppa:brightbox/ruby-ng"
+      end
+    end
+
   end
 end
 
+before "setup:packages", "setup:app:package_sources"
 after "setup:system", "setup:app:packages"
 
 set :app_packages, %w[
@@ -51,8 +59,8 @@ set :app_packages, %w[
   libxslt-dev
   mercurial
   netcat-openbsd
-  ruby2.0-dev
-  ruby2.0
+  ruby2.1-dev
+  ruby2.1
   socat
   sqlite3
   telnet

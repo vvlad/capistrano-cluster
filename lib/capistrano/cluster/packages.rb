@@ -9,7 +9,7 @@ module Capistrano
 
         def install(*packages)
           update_apt_source_list
-          sudo "apt-get", "-q", "-y", "install", *packages.flatten
+          sudo "apt-get", "-q", "-y", "--force-yes","install", *packages.flatten
         end
 
         class TemplateContext < SimpleDelegator

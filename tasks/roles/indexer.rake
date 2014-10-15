@@ -1,9 +1,9 @@
 
-solr_version = fetch(:solr_version, "4.7.1")
+solr_version = fetch(:solr_version, "4.10.0")
 
 set :solr_version, solr_version
-set :solr_url, fetch(:solr_url, "http://mirrors.hostingromania.ro/apache.org/lucene/solr/#{solr_version}/solr-#{solr_version}.tgz")
-set :solr_checksum, '92d4ed3890b8b78a711f27fb87adb8e517447416'
+set :solr_url, fetch(:solr_url, "http://www.eu.apache.org/dist/lucene/solr/#{solr_version}/solr-#{solr_version}.tgz")
+set :solr_checksum, 'ae47a89f35b5e2a6a4e55732cccc64fb10ed9779'
 set :solr_data, "/var/lib/solr"
 set :solr_dist, "/opt/solr"
 set :solr_user, "solr"
