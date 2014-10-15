@@ -1,26 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<schema name="example" version="1.5">
+<schema name="sunspot" version="2.0">
   <types>
     <fieldType name="string" class="solr.StrField" omitNorms="true"/>
     <fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate"/>
-
     <fieldType name="tdouble" class="solr.TrieDoubleField" omitNorms="true"/>
     <fieldType name="rand" class="solr.RandomSortField" omitNorms="true"/>
-    <fieldType name="text" class="solr.TextField" omitNorms="false">
-      <analyzer>
-        <charFilter class="solr.HTMLStripCharFilterFactory"/>
-        <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-FoldToASCII.txt"/>
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <filter class="solr.StandardFilterFactory"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.StopFilterFactory"/>
-        <filter class="solr.PorterStemFilterFactory"/>
-        <filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="15" side="front"/>
-
-      </analyzer>
-    </fieldType>
-
     <fieldType name="boolean" class="solr.BoolField" omitNorms="true"/>
     <fieldType name="date" class="solr.DateField" omitNorms="true"/>
     <fieldType name="sdouble" class="solr.SortableDoubleField" omitNorms="true"/>
@@ -34,13 +19,26 @@
     <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
     <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
     <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="text" class="solr.TextField" omitNorms="false">
+      <analyzer type="index">
+        <charFilter class="solr.HTMLStripCharFilterFactory"/>
+        <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-FoldToASCII.txt"/>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="20" side="front"/>
+      </analyzer>
+      <analyzer type="query">
+        <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-FoldToASCII.txt"/>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
   </types>
 
-
   <fields>
-
     <field name="id" stored="true" type="string" multiValued="false" indexed="true"/>
     <field name="_version_" type="long"     indexed="true"  stored="true"/>
+    <field name="_root_" type="string" indexed="true" stored="false"/>
     <field name="type" stored="false" type="string" multiValued="true" indexed="true"/>
     <field name="class_name" stored="false" type="string" multiValued="false" indexed="true"/>
     <field name="text" stored="false" type="string" multiValued="true" indexed="true"/>
@@ -110,5 +108,4 @@
 
   <defaultSearchField>text</defaultSearchField>
   <solrQueryParser defaultOperator="AND"/>
-
 </schema>
