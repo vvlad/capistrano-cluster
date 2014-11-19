@@ -29,11 +29,17 @@ namespace :deploy do
           "RUBY_FREE_MIN" => 100000,
           "RUBY_GC_MALLOC_LIMIT" => 59000000
         }
+
         fetch(:secrets, {}).merge(gc_settings).each_pair do |key,value|
-          env.puts "export #{"#{key}".upcase}=#{value}"
+          env.puts "export #{"#{key}".upcase}='#{Shellwords.shellescape(value)}'"
         end
         env.rewind
+
         upload! env, shared_path.join(".env")
+        yaml = StringIO.new({ "#{fetch(:framework_env)}" => fetch(:secrets, {}) }.to_yaml)
+
+        upload! yaml, shared_path.join("config/secrets.yml")
+
       end
 
     end
