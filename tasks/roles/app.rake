@@ -59,8 +59,8 @@ set :app_packages, %w[
   libxslt-dev
   mercurial
   netcat-openbsd
-  ruby2.1-dev
-  ruby2.1
+  ruby2.2-dev
+  ruby2.2
   socat
   sqlite3
   telnet
