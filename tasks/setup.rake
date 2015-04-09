@@ -42,7 +42,7 @@ namespace :setup do
     on roles(:all) do |host|
       login_as :root, on: host do
         unless (hostname = capture(:hostname).strip).empty?
-          upload_as :root, file("etc/hosts", hostname: hostname), "/etc/hosts"
+          upload_as "root", file("etc/hosts", hostname: hostname), "/etc/hosts"
         end
       end
     end

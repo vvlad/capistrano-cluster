@@ -36,7 +36,7 @@ namespace :setup do
     end
 
 
-    on roles(:proxy).each do |server|
+    on roles(:proxy) do |server|
       ufw :allow, "in http"
       ufw :allow, "in https"
     end
