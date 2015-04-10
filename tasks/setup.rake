@@ -86,7 +86,7 @@ namespace :setup do
     on roles(:all) do
       unless test "[ -f /etc/apt/sources.list.d/pgdg.list ]"
         execute %q[wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -]
-        sudo %q[echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -c | awk '{print $2}'`-pgdg main" >/etc/apt/sources.list.d/pgdg.list]
+        sudo %q[echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -c | awk '{print $2}'`-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list]
       end
     end
   end
