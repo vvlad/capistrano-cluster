@@ -29,35 +29,37 @@ namespace :deploy do
 
     task :db do
 
-      db_user = fetch(:database)[:username]
-      db_pass = fetch(:database)[:password]
-      db_name = fetch(:database).fetch(:name, fetch(:application))
-      enconding = fetch(:database)[:enconding] || "utf-8"
+      unless fetch(:database,{}).empty?
+        db_user = fetch(:database)[:username]
+        db_pass = fetch(:database)[:password]
+        db_name = fetch(:database).fetch(:name, fetch(:application))
+        enconding = fetch(:database)[:enconding] || "utf-8"
 
-      on roles(:db) do
+        on roles(:db) do
 
-        if capture(:psql, "-U", "postgres", "template1", "-t", "-c", "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '#{db_user}'".shellescape).empty?
-          execute :psql, "-U", "postgres", "-c", "CREATE ROLE #{db_user} LOGIN PASSWORD '#{db_pass}';".shellescape
+          if capture(:psql, "-U", "postgres", "template1", "-t", "-c", "SELECT 1 FROM pg_catalog.pg_user WHERE usename = '#{db_user}'".shellescape).empty?
+            execute :psql, "-U", "postgres", "-c", "CREATE ROLE #{db_user} LOGIN PASSWORD '#{db_pass}';".shellescape
+          end
+
+          if capture(:psql, "-U", "postgres", "template1", "-t", "-c", "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '#{db_name}'".shellescape).empty?
+            execute :psql, "-U", "postgres", "-c", "CREATE DATABASE #{db_name} ENCODING '#{enconding}' OWNER #{db_user};".shellescape
+            execute :psql, "-U", "postgres", "#{db_name}", "-c", "CREATE EXTENSION postgis;".shellescape
+          end
+
         end
 
-        if capture(:psql, "-U", "postgres", "template1", "-t", "-c", "SELECT 1 FROM pg_catalog.pg_database WHERE datname = '#{db_name}'".shellescape).empty?
-          execute :psql, "-U", "postgres", "-c", "CREATE DATABASE #{db_name} ENCODING '#{enconding}' OWNER #{db_user};".shellescape
-          execute :psql, "-U", "postgres", "#{db_name}", "-c", "CREATE EXTENSION postgis;".shellescape
+        on roles(:app) do
+          defaults = {
+            environment: fetch(:framework_env),
+            hostname: primary(:db),
+            name: db_name,
+            adapter: 'postgresql',
+            encoding: 'utf-8',
+            options:{}
+          }
+          settings = defaults.merge(fetch(:database))
+          upload! file("database.yml", settings), "#{shared_path}/config/database.yml"
         end
-
-      end
-
-      on roles(:app) do
-        defaults = {
-          environment: fetch(:framework_env),
-          hostname: primary(:db),
-          name: db_name,
-          adapter: 'postgresql',
-          encoding: 'utf-8',
-          options:{}
-        }
-        settings = defaults.merge(fetch(:database))
-        upload! file("database.yml", settings), "#{shared_path}/config/database.yml"
       end
 
     end
