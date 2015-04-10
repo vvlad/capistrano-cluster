@@ -27,7 +27,7 @@ namespace :setup do
 end
 
 namespace :deploy do
-  task :rabbitmq do
+  task :mongodb do
   end
 end
 
