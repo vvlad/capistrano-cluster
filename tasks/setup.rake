@@ -1,4 +1,3 @@
-
 set :default_packages, %w{tmux htop vim-nox software-properties-common curl wget unattended-upgrades bash-completion git lsof ufw ngrep}
 set :packages, fetch(:packages, [])
 

@@ -9,7 +9,9 @@ module Capistrano
 
         def install(*packages)
           update_apt_source_list
-          sudo "apt-get", "-q", "-y", "--force-yes","install", *packages.flatten
+          with debian_frontend: "noninteractive" do
+            sudo "apt-get", "-q", "-y", "--force-yes","install", *packages.flatten
+          end
         end
 
         class TemplateContext < SimpleDelegator

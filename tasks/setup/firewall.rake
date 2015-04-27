@@ -14,6 +14,7 @@ namespace :setup do
     on roles(:db) do
       roles(:app).each do |server|
         ufw :allow, "proto tcp from #{server.hostname} to any port postgresql"
+        ufw :allow, "proto tcp from #{server.hostname} to any port mysql"
       end
     end
 
