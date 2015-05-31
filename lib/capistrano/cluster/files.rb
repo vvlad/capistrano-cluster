@@ -40,7 +40,7 @@ module Capistrano
 
         def item(identifier)
           consume = false
-          xml = File.read(caller.first.split(":").first).lines.select { |l| consume ||= l =~/^__END__$/ || consume}[1..-1].join()
+          xml = File.read(caller.first.match(/(?<file>.*):(?<line_number>\d+):/)["file"]).lines.select { |l| consume ||= l =~/^__END__$/ || consume}[1..-1].join()
           doc = Nokogiri::HTML(xml)
           doc.css("##{identifier}").inner_html
         end
