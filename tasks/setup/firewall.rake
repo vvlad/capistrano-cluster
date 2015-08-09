@@ -13,26 +13,34 @@ namespace :setup do
 
     on roles(:db) do
       roles(:app).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port postgresql"
-        ufw :allow, "proto tcp from #{server.hostname} to any port mysql"
+        [server.hostname.to_s, server.properties.private_ip].compact.each do |ip|
+          ufw :allow, "proto tcp from #{ip} to any port postgresql"
+          ufw :allow, "proto tcp from #{ip} to any port mysql"
+        end
       end
     end
 
     on roles(:indexer) do
       roles(:app).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port 8983"
+        [server.hostname.to_s, server.properties.private_ip].compact.each do |ip|
+          ufw :allow, "proto tcp from #{ip} to any port 8983"
+        end
       end
     end
 
     on roles(:cache) do
       roles(:app).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port 6379"
+        [server.hostname.to_s, server.properties.private_ip].compact.each do |ip|
+          ufw :allow, "proto tcp from #{ip} to any port 6379"
+        end
       end
     end
 
     on roles(:web) do
       roles(:proxy).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port http"
+        [server.hostname.to_s, server.properties.private_ip].compact.each do |ip|
+          ufw :allow, "proto tcp from #{ip} to any port http"
+        end
       end
     end
 

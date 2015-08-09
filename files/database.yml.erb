@@ -1,6 +1,6 @@
 <%= environment %>:
   adapter: <%= adapter %>
-  host: <%= hostname %>
+  host: <%= hostname.properties.private_ip || hostname %>
   database: <%= name %>
   username: <%= username %>
   password: <%= password %>

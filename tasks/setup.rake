@@ -75,7 +75,7 @@ namespace :setup do
         sudo "dd if=/dev/zero of=/swap count=$(cat /proc/meminfo | head -1  | awk '{ print $2*2 }') bs=1KB"
         sudo "mkswap /swap"
         sudo "swapon /swap"
-        sudo "echo '/swap none            swap    sw              0       0' >> /etc/fstab "
+        sudo "su -c \"echo '/swap none            swap    sw              0       0' >> /etc/fstab\""
       end
     end
   end

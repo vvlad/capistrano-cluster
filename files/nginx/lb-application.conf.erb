@@ -2,16 +2,19 @@
 upstream upstream_<%= fetch(:application) %>_<%= fetch(:framework_env)%> {
   keepalive 1024;
   <% roles(:web).each do |backend| %>
-  server <%= backend.hostname %> max_fails=3 fail_timeout=10s;
+  server <%= backend.properties.private_ip || backend.hostname %> max_fails=3 fail_timeout=10s;
   <% end %>
 }
 
+<% if lb_nginx_custom = fetch(:lb_nginx_custom) %>
+<%= lb_nginx_custom %>
+<% end %>
 
 server {
   listen 80;
 
   <% fetch(:hostnames).each do |hostname| %>
-    server_name <%= hostname %>;
+  server_name <%= hostname %>;
   <%end%>
 
   access_log  /var/log/nginx/<%= fetch(:application) %>-<%= fetch(:framework_env)%>.log main;

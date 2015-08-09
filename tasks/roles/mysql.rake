@@ -31,9 +31,11 @@ namespace :deploy do
           enconding = fetch(:database)[:enconding] || "utf-8"
 
           on roles(:db) do
-            execute :mysql, "-u", "root", "-e", "\"CREATE DATABASE IF NOT EXISTS #{db_name};\""
-            roles(:app).map(&:to_s).each do |host|
-              execute :mysql, "-u", "root", "-e", "\"GRANT ALL ON \\\`#{db_name}\\\`.* TO '#{db_user}'@'#{host}' IDENTIFIED BY '#{db_pass}'\";"
+            execute :mysql, "-u", "root", "-e", "\"CREATE DATABASE IF NOT EXISTS #{db_name} CHARACTER SET utf8 COLLATE utf8_general_ci;\""
+            roles(:app).each do |server|
+              [server.hostname.to_s, server.properties.private_ip].compact.each do |host|
+                execute :mysql, "-u", "root", "-e", "\"GRANT ALL ON \\\`#{db_name}\\\`.* TO '#{db_user}'@'#{host}' IDENTIFIED BY '#{db_pass}'\";"
+              end
             end
           end
 
