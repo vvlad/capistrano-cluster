@@ -2,25 +2,19 @@ solr_version = fetch(:solr_version, "4.9.0")
 
 set :solr_version, solr_version
 set :solr_url, fetch(:solr_url, "http://www.eu.apache.org/dist/lucene/solr/#{solr_version}/solr-#{solr_version}.tgz")
-set :solr_checksum, 'ae47a89f35b5e2a6a4e55732cccc64fb10ed9779'
+set :solr_checksum, "ae47a89f35b5e2a6a4e55732cccc64fb10ed9779"
 set :solr_data, "/var/lib/solr"
 set :solr_dist, "/opt/solr"
 set :solr_user, "solr"
 
-
 namespace :setup do
-
   desc "Boostraps solr nodes"
   task :indexer do
-
     on roles(:indexer) do
-
       solr_dist = fetch(:solr_dist)
       solr_data = fetch(:solr_data)
 
-
       if test "[ ! -e '/etc/init.d/solr' ]"
-
 
         install "openjdk-7-jre-headless"
 
@@ -46,21 +40,15 @@ namespace :setup do
       end
 
       sudo "nohup /etc/init.d/solr restart"
-
     end
-
-
   end
-
 end
 
 after "setup:system", "setup:indexer"
 
 namespace :deploy do
   namespace :application do
-
     task :indexer do
-
       config = { application: fetch(:application), name: fetch(:solr_core) }
 
       on roles(:indexer) do
@@ -74,16 +62,12 @@ namespace :deploy do
           end
           execute :touch, "#{solr_data}/#{config[:name]}/core.properties"
         end
-
       end if config[:name]
-
     end
-
   end
 end
 
-
-set :solr_core_files , %w[
+set :solr_core_files, %w[
   conf/mapping-FoldToASCII.txt
   conf/schema.xml
   conf/solrconfig.xml
@@ -127,6 +111,3 @@ set :solr_core_files , %w[
   conf/lang/stopwords_tr.txt
   conf/lang/userdict_ja.txt
 ]
-
-
-

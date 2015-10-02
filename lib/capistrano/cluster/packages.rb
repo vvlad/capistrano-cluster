@@ -59,4 +59,4 @@ end
 
 include Capistrano::Cluster::Packages::DSL
 
-set :files_path, fetch(:files_path, Pathname(fetch(:deploy_config_path)).dirname.join("files"))
+set :files_path, fetch(:files_path, Pathname(fetch(:deploy_config_path, "./deploy")).dirname.join("files"))
