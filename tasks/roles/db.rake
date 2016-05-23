@@ -1,4 +1,7 @@
 # TODO: (vvlad): tune using pgtune
+
+Kernel::require('resolv')
+
 namespace :setup do
   task :db do
     on roles(:db) do

@@ -1,3 +1,4 @@
+Kernel::require('resolv')
 namespace :setup do
 
   task :firewall do
@@ -13,25 +14,25 @@ namespace :setup do
 
     on roles(:db) do
       roles(:app).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port postgresql"
+        ufw :allow, "proto tcp from #{Resolv.getaddress server.hostname} to any port postgresql"
       end
     end
 
     on roles(:indexer) do
       roles(:app).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port 8983"
+        ufw :allow, "proto tcp from #{Resolv.getaddress server.hostname} to any port 8983"
       end
     end
 
     on roles(:cache) do
       roles(:app).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port 6379"
+        ufw :allow, "proto tcp from #{Resolv.getaddress server.hostname} to any port 6379"
       end
     end
 
     on roles(:web) do
       roles(:proxy).each do |server|
-        ufw :allow, "proto tcp from #{server.hostname} to any port http"
+        ufw :allow, "proto tcp from #{Resolv.getaddress server.hostname} to any port http"
       end
     end
 
@@ -48,6 +49,5 @@ namespace :setup do
   end
 
 end
-
 
 before "setup:finished", "setup:firewall"
