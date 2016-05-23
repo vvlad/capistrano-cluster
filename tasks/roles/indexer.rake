@@ -61,6 +61,7 @@ namespace :deploy do
             upload! file("solr/#{core_file}"), "#{solr_data}/#{config[:name]}/#{core_file}"
           end
           execute :touch, "#{solr_data}/#{config[:name]}/core.properties"
+          sudo "nohup /etc/init.d/solr reload"
         end
       end if config[:name]
     end
